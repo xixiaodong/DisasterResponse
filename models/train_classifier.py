@@ -33,9 +33,10 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline, FeatureUnion
 
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
+nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger', 'stopwords'])
 
 
 def load_data(database_filepath):
@@ -68,18 +69,20 @@ def tokenize(text):
     Returns:
         clean_tokens : cleaned tokenised text (list)
     '''
-    url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-    detected_urls = re.findall(url_regex, text)
-    for url in detected_urls:
-        text = text.replace(url, "urlplaceholder")
-
-    tokens = word_tokenize(text)
+    utext = re.sub(r"[^a-zA-Z0-9]", ' ', text.lower())
+    
+    # tokenize
+    words = word_tokenize(text)
+    
+    # remove Stopwords
+    words = [w for w in words if w not in stopwords.words('english')]
+    
+    # lemmatize
     lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
+    lemmed = [lemmatizer.lemmatize(w, pos='n').strip() for w in words]
+    
+    # get cleaned tokens
+    clean_tokens = [lemmatizer.lemmatize(w, pos='v').strip() for w in lemmed]
 
     return clean_tokens
 

@@ -62,8 +62,20 @@ def clean_data(df):
     return df
 
 def save_data(df, database_filename):
-    pass  
+    '''
+    save data function
 
+    Args:
+      df : cleaned dataset in pandas DataFrame
+      database_filename : location of database file in '.db' format
+
+    Returns:
+      None (this function only performs saving action)
+    '''  
+    engine = create_engine('sqlite:///DisasterResponse_xx.db')
+    df.to_sql('df', engine, index=False)
+
+    pass
 
 def main():
     if len(sys.argv) == 4:

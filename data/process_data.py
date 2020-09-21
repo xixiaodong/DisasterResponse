@@ -1,4 +1,14 @@
-## load libraries
+'''
+This is part of the Disaster Response project for Udacity Data
+Science Nanodegree.
+
+This script contains the Extract Transform Load (ETL) pipeline.
+The pipeline consists of loading, cleaning and saving the data.
+
+Author: Xiaodong Xi
+'''
+
+# load libraries
 import sys
 import numpy as np
 import pandas as pd

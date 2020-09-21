@@ -1,12 +1,29 @@
+## load libraries
 import sys
+import numpy as np
+import pandas as pd
+from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    '''
+    load data function
 
+    Args:
+      messages_filepath : location of messages csv file
+      categories_filepath : location of categories csv file
+    
+    Returns:
+      df : Pandas DataFrame containing loaded data
+    '''
+    message = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    df = pd.merge(message, categories, on='id')
+
+    return df
 
 def clean_data(df):
-    pass
+    
 
 
 def save_data(df, database_filename):

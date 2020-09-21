@@ -82,7 +82,7 @@ def save_data(df, database_filename):
     Returns:
       None (this function only performs saving action)
     '''  
-    engine = create_engine('sqlite:///DisasterResponse_xx.db')
+    engine = create_engine('sqlite:///' + database_filename)
     df.to_sql('df', engine, index=False)
 
     pass

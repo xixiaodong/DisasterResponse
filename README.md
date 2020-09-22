@@ -1,5 +1,8 @@
 # Disaster Response Pipeline Project
 
+### Motivation
+This project aims to apply data ETL pipelines and machine learning pipelines with natural language processing to complete disaster response message classification.
+
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
 

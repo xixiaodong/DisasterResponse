@@ -26,11 +26,11 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('df', engine)
 
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -43,6 +43,13 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    top_category_count = df.iloc[:,4:].sum().sort_values(ascending=False)[1:6]
+    top_category_names = list(top_category_count.index)
+    
+    #genre and aid_related status
+    aid_rel1 = df[df['aid_related']==1].groupby('genre').count()['message']
+    aid_rel0 = df[df['aid_related']==0].groupby('genre').count()['message']
+    genre_names = list(aid_rel1.index)
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -62,6 +69,50 @@ def index():
                 'xaxis': {
                     'title': "Genre"
                 }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=top_category_names,
+                    y=top_category_count
+                )
+            ],
+
+            'layout': {
+                'title': 'Top Five Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Categories"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=genre_names,
+                    y=aid_rel1,
+                    name = 'Aid related'
+
+                ),
+                Bar(
+                    x=genre_names,
+                    y= aid_rel0,
+                    name = 'Aid not related'
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of message by genre and \'aid related\' class ',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                },
+                'barmode' : 'group'
             }
         }
     ]

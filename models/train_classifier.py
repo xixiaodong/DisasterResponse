@@ -51,8 +51,8 @@ def load_data(database_filepath):
         Y : target vector in DataFrame
         category_names : name of categories (pandas index)
     '''
-    engine = create_engine('sqlite:///'+database_filepath)
-    df = pd.read_sql_table('df',engine)
+    engine = create_engine('sqlite:///' + database_filepath)
+    df = pd.read_sql_table('df', engine)
     X = df['message']
     Y = df.iloc[:,4:]
     category_names = Y.columns
@@ -69,7 +69,7 @@ def tokenize(text):
     Returns:
         clean_tokens : cleaned tokenised text (list)
     '''
-    utext = re.sub(r"[^a-zA-Z0-9]", ' ', text.lower())
+    utext = re.sub(r'[^a-zA-Z0-9]', ' ', text.lower())
     
     # tokenize
     words = word_tokenize(text)
@@ -115,22 +115,13 @@ def build_model():
         model : model object
     '''
     pipeline = Pipeline([
-        ('features', FeatureUnion([
+                        ('vect', CountVectorizer(tokenizer=tokenize)),
+                        ('tfidf', TfidfTransformer()),
+                        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+                        ])
 
-            ('text_pipeline', Pipeline([
-                ('vect', CountVectorizer(tokenizer=tokenize)),
-                ('tfidf', TfidfTransformer())
-            ])),
-
-            ('starting_verb', StartingVerbExtractor())
-        ])),
-
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))
-    ])
-
-    parameters = {'clf__estimator__n_estimators': [50, 100],
-                  'clf__estimator__min_samples_split': [2, 3, 4],
-                  'clf__estimator__criterion': ['entropy', 'gini']
+    parameters = {'clf__estimator__n_estimators': [10, 20],
+                  'clf__estimator__min_samples_split': [2, 3, 4]
                  }
     cv = GridSearchCV(pipeline, param_grid=parameters)
     
@@ -146,16 +137,16 @@ def evaluate_model(model, X_test, Y_test, category_names):
         model : model object
         X_test : testing feature matrix (DataFrame)
         Y_test : testing target vector (DataFrame)
-        category_names : 
+        category_names : names of category (list)
     '''
     Y_pred = model.predict(X_test)
     
     # Calculate the accuracy for each of them.
     for j in range(len(category_names)):
-        print("Category:", category_names[j],"\n", classification_report(Y_test.iloc[:, j].values, Y_pred[:, j]))
+        print('Category:', category_names[j],'\n', classification_report(Y_test.iloc[:, j].values, Y_pred[:, j]))
         print('Accuracy of %25s: %.2f' %(category_names[j], accuracy_score(Y_test.iloc[:, j].values, Y_pred[:, j])))
 
-
+    pass
 
 def save_model(model, model_filepath):
     '''
@@ -165,10 +156,10 @@ def save_model(model, model_filepath):
         model : model object
         model_filepath: location to store model
     Returns:
-        None (performs saving model action)
+        None (performs saving model action into pickle file)
     '''
 
-    pickle.dump(model, open(model_filepath, "wb"))
+    pickle.dump(model.best_estimator_, open(model_filepath, "wb"))
 
     pass
 

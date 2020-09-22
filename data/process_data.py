@@ -58,7 +58,7 @@ def clean_data(df):
     # convert category values to just numbers 0 or 1
     for column in categories:
         categories[column] = categories[column].str[-1]
-        categories[column] = categories[column].astype(np.int)
+        categories[column] = pd.to_numeric(categories[column])
 
     # drop the original categories column from 'df'
     df = df.drop('categories',axis=1)

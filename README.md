@@ -13,4 +13,6 @@
 
 3. Go to http://0.0.0.0:3001/
 
-[Plots:](https://github.com/xixiaodong/DisasterResponse/blob/master/DisasterPlots.png)
+Here are the plots:
+![plots]
+(https://github.com/xixiaodong/DisasterResponse/blob/master/DisasterPlots.png)
